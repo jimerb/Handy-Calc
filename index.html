@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Handy Calc</title>
+<style>
+html{color-scheme:dark;background:#08090b;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{width:100%;min-height:100vh;min-height:100svh;--card-padding:24px;--card-radius:20px;--card-gap:20px;--brand-gap:13px;--logo-size:54px;--brand-name-size:23px;--tagline-size:8.5px;--tagline-spacing:.16em;--pct-gap:10px;--pct-step-width:46px;--pct-value-gap:6px;--pct-value-pad:8px;--pct-input-width:130px;--pct-input-size:48px;--duration-result-pad:14px;--done-time-size:26px;--countdown-size:22px;--tab-min-height:0px;--action-min-height:0px;--footer-min-height:0px}
+@media (max-width:520px){
+  body{padding:18px 12px!important;--card-padding:18px;--card-radius:17px;--card-gap:18px;--brand-gap:11px;--logo-size:48px}
+}
+@media (max-width:360px){
+  body{--card-padding:15px;--logo-size:44px;--brand-name-size:21px;--tagline-size:7.5px;--tagline-spacing:.12em;--pct-gap:6px;--pct-step-width:40px;--pct-value-gap:3px;--pct-value-pad:4px;--pct-input-width:96px;--pct-input-size:40px;--duration-result-pad:8px;--done-time-size:21px;--countdown-size:16.5px}
+}
+@media (pointer:coarse){
+  body{--tab-min-height:44px;--action-min-height:38px;--footer-min-height:40px}
+}
+@supports (padding:max(0px)){
+  @media (max-width:520px){
+    body{padding-top:max(18px,env(safe-area-inset-top))!important;padding-right:max(12px,env(safe-area-inset-right))!important;padding-bottom:max(18px,env(safe-area-inset-bottom))!important;padding-left:max(12px,env(safe-area-inset-left))!important}
+  }
+}
+</style>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics=""><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Roboto+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"><style>body{margin:0;min-height:100vh;background:radial-gradient(120% 80% at 50% 0%,#12151b 0%,#08090b 60%);font-family:'IBM Plex Sans',system-ui,sans-serif;display:flex;align-items:flex-start;justify-content:center;padding:48px 20px}a{color:#F2C14E}a:hover{color:#ffd980}input[type=number]{-moz-appearance:textfield}input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}input[type=datetime-local]::-webkit-calendar-picker-indicator{filter:invert(.85);opacity:.6;cursor:pointer;transform:scale(1.2)}input[type=range]{-webkit-appearance:none;appearance:none;height:20px;background:transparent;cursor:pointer}input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,#B98A1F,#F2C14E) 0/var(--fill,0%) no-repeat,rgba(255,255,255,.09)}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-6px;border-radius:50%;background:#F2C14E;border:3px solid #0A0C10;box-shadow:0 0 0 3px rgba(242,193,78,.25)}input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:rgba(255,255,255,.09)}input[type=range]::-moz-range-progress{height:6px;border-radius:3px;background:#F2C14E}input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#F2C14E;border:3px solid #0A0C10}</style></helmet>
+
+<sc-if value="{{ tip }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:{{ tipX }};top:{{ tipY }};transform:translate(-50%,-100%);z-index:99;max-width:240px;padding:9px 12px;background:#1F232B;border:1px solid rgba(255,255,255,.14);border-radius:9px;box-shadow:0 10px 28px rgba(0,0,0,.6);font:400 11.5px/1.5 'IBM Plex Sans',sans-serif;color:#DDE0E5;pointer-events:none">{{ tip }}</div>
+</sc-if>
+
+<sc-if value="{{ help }}" hint-placeholder-val="{{ false }}">
+<div class="help-backdrop" onClick="{{ closeHelp }}" style="box-sizing:border-box;position:fixed;inset:0;z-index:100;background:rgba(4,5,7,.74);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px">
+<div style="box-sizing:border-box;width:100%;max-width:440px;background:#14161B;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:26px 26px 22px;box-shadow:0 30px 80px rgba(0,0,0,.7)">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:7px">
+<div style="width:22px;height:22px;border-radius:50%;background:{{ helpColor }};color:#111;font:700 13px 'Roboto Mono',monospace;display:flex;align-items:center;justify-content:center">?</div>
+<h3 style="margin:0;font:600 16px 'IBM Plex Sans',sans-serif;color:#F2F3F5">{{ helpTitle }}</h3>
+</div>
+<p style="margin:0 0 17px;font:400 12.5px/1.6 'IBM Plex Sans',sans-serif;color:#9AA0AA">{{ helpBlurb }}</p>
+<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+<sc-for list="{{ helpSteps }}" as="step" hint-placeholder-count="3">
+<div style="display:flex;gap:10px;align-items:flex-start">
+<div style="flex:none;width:18px;height:18px;margin-top:1px;border-radius:5px;background:rgba(255,255,255,.07);color:#9AA0AA;font:500 10px 'Roboto Mono',monospace;display:flex;align-items:center;justify-content:center">{{ step.n }}</div>
+<div style="font:400 12.5px/1.5 'IBM Plex Sans',sans-serif;color:#DDE0E5">{{ step.text }}</div>
+</div>
+</sc-for>
+</div>
+<button onClick="{{ closeHelp }}" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:#F2F3F5;font:500 12.5px 'IBM Plex Sans',sans-serif;cursor:pointer" style-hover="background:rgba(255,255,255,.13)">Got it</button>
+</div>
+</div>
+</sc-if>
+
+<div class="app-card" style="box-sizing:border-box;width:100%;max-width:min(440px,calc(100vw - 24px));background:#0E1014;border:1px solid rgba(255,255,255,.09);border-radius:var(--card-radius,20px);padding:var(--card-padding,24px);display:flex;flex-direction:column;gap:var(--card-gap,20px);box-shadow:0 28px 70px rgba(0,0,0,.55)">
+
+<div class="brand-header" style="display:flex;align-items:center;gap:var(--brand-gap,13px);padding:1px 2px 3px">
+<svg class="brand-logo" width="54" height="54" viewBox="0 0 64 64" aria-hidden="true" style="flex:none;width:var(--logo-size,54px);height:var(--logo-size,54px);overflow:visible">
+<defs>
+<linearGradient id="handyCalcMark" x1="11" y1="12" x2="53" y2="52" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#F8D878"></stop>
+<stop offset=".48" stop-color="#F2C14E"></stop>
+<stop offset="1" stop-color="#8B7CFF"></stop>
+</linearGradient>
+<filter id="handyCalcGlow" x="-35%" y="-35%" width="170%" height="170%">
+<feGaussianBlur stdDeviation="2.2" result="blur"></feGaussianBlur>
+<feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+</filter>
+</defs>
+<circle cx="32" cy="32" r="23" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="3"></circle>
+<circle cx="32" cy="32" r="23" fill="none" stroke="url(#handyCalcMark)" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="106 39" transform="rotate(-90 32 32)" filter="url(#handyCalcGlow)"></circle>
+<path d="M23 21V43M41 21V43M23 32H41" fill="none" stroke="url(#handyCalcMark)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+<circle cx="23" cy="21" r="2.4" fill="#F8D878"></circle>
+<circle cx="41" cy="43" r="2.4" fill="#8B7CFF"></circle>
+<circle cx="32" cy="32" r="2.8" fill="#F2F3F5"></circle>
+</svg>
+<div style="min-width:0;display:flex;flex-direction:column;gap:4px">
+<div class="brand-name" style="font:700 23px/1 'IBM Plex Sans',sans-serif;font-size:var(--brand-name-size,23px);letter-spacing:-.045em;white-space:nowrap"><span style="color:#F2F3F5">Handy</span> <span style="color:#F2C14E">Calc</span></div>
+<div class="brand-tagline" style="font:500 8.5px/1 'Roboto Mono',monospace;font-size:var(--tagline-size,8.5px);letter-spacing:var(--tagline-spacing,.16em);text-transform:uppercase;color:#777F8B;white-space:nowrap">time · progress · finish</div>
+</div>
+</div>
+
+<div style="display:flex;padding:3px;background:#15181E;border:1px solid rgba(255,255,255,.07);border-radius:11px;gap:3px">
+<button class="tab-button" onClick="{{ tabProgress }}" style="flex:1;min-height:var(--tab-min-height,0px);padding:9px;border:none;border-radius:8px;background:{{ tabAbg }};color:{{ tabAfg }};font:600 11.5px 'IBM Plex Sans',sans-serif;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background .18s ease">By progress</button>
+<button class="tab-button" onClick="{{ tabDuration }}" style="flex:1;min-height:var(--tab-min-height,0px);padding:9px;border:none;border-radius:8px;background:{{ tabBbg }};color:{{ tabBfg }};font:600 11.5px 'IBM Plex Sans',sans-serif;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background .18s ease">By duration</button>
+</div>
+
+<sc-if value="{{ isProgressTab }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:20px">
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="padding:14px 16px 15px;background:#15181E;border:1px solid rgba(255,255,255,.09);border-radius:13px" style-focus-within="border-color:#F2C14E">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+<span style="font:500 10.5px 'Roboto Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:#8A9199;cursor:help;border-bottom:1px dotted rgba(255,255,255,.22)" onMouseEnter="{{ tipStart }}" onMouseLeave="{{ hideTip }}">Started</span>
+<button class="action-button" onClick="{{ setNow }}" style="min-height:var(--action-min-height,0px);padding:5px 11px;background:rgba(242,193,78,.13);border:1px solid rgba(242,193,78,.28);border-radius:7px;color:#F2C14E;font:500 11px 'IBM Plex Sans',sans-serif;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent" style-hover="background:#F2C14E;color:#111">Now</button>
+</div>
+<input type="datetime-local" value="{{ start }}" max="{{ maxStart }}" onChange="{{ onStart }}" style="width:100%;box-sizing:border-box;padding:12px 14px;background:#0A0C10;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F2F3F5;font:600 17px 'Roboto Mono',monospace;outline:none" style-focus="border-color:#F2C14E">
+</div>
+
+<div style="padding:15px 16px 17px;background:#15181E;border:1px solid rgba(242,193,78,.22);border-radius:13px" style-focus-within="border-color:#F2C14E">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
+<span style="font:500 10.5px 'Roboto Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:#8A9199;cursor:help;border-bottom:1px dotted rgba(255,255,255,.22)" onMouseEnter="{{ tipPct }}" onMouseLeave="{{ hideTip }}">Percent done</span>
+<span style="font:400 10.5px 'IBM Plex Sans',sans-serif;color:#5C636E">0.1 – 99.9</span>
+</div>
+<div class="pct-row" style="display:flex;align-items:stretch;gap:var(--pct-gap,10px)">
+<button class="pct-step" onClick="{{ pctDown }}" style="flex:none;width:var(--pct-step-width,46px);background:#0A0C10;border:1px solid rgba(255,255,255,.1);border-radius:11px;color:#F2C14E;font:400 22px 'Roboto Mono',monospace;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent" style-hover="background:rgba(242,193,78,.14);border-color:rgba(242,193,78,.4)">−</button>
+<div class="pct-value" style="flex:1;min-width:0;display:flex;align-items:baseline;justify-content:center;gap:var(--pct-value-gap,6px);padding:14px var(--pct-value-pad,8px) 15px;background:#0A0C10;border:1px solid rgba(255,255,255,.1);border-radius:11px">
+<input class="pct-input" type="text" inputMode="decimal" placeholder="0.0" value="{{ pct }}" onChange="{{ onPct }}" onBlur="{{ pctBlur }}" style="min-width:0;width:var(--pct-input-width,130px);background:transparent;border:none;color:#F2C14E;font:700 48px/1 'Roboto Mono',monospace;font-size:var(--pct-input-size,48px);letter-spacing:-.03em;outline:none;text-align:right">
+<span style="font:500 20px 'Roboto Mono',monospace;color:#8A9199">%</span>
+</div>
+<button class="pct-step" onClick="{{ pctUp }}" style="flex:none;width:var(--pct-step-width,46px);background:#0A0C10;border:1px solid rgba(255,255,255,.1);border-radius:11px;color:#F2C14E;font:400 22px 'Roboto Mono',monospace;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent" style-hover="background:rgba(242,193,78,.14);border-color:rgba(242,193,78,.4)">+</button>
+</div>
+<input type="range" min="0.1" max="99.9" step="0.1" value="{{ pctSlider }}" onChange="{{ onPct }}" style="width:100%;margin:15px 0 0;display:block;--fill:{{ pctWidth }}">
+<div style="display:flex;justify-content:space-between;margin-top:5px;font:400 9.5px 'Roboto Mono',monospace;color:#4E555F">
+<span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+</div>
+</div>
+</div>
+
+<sc-if value="{{ hasProgress }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:11px">
+<div style="padding:17px;background:linear-gradient(135deg,rgba(125,249,166,.11),rgba(125,249,166,.02));border:1px solid rgba(125,249,166,.2);border-radius:14px;text-align:center">
+<div style="font:500 9.5px 'Roboto Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6FCF97;margin-bottom:8px">Estimated finish</div>
+<div style="font:700 32px/1 'Roboto Mono',monospace;color:#BFF7D5;letter-spacing:-.02em;margin-bottom:7px">{{ etaTime }}</div>
+<div style="font:400 12px 'IBM Plex Sans',sans-serif;color:#8FE9B4">{{ etaDate }} · {{ etaRel }}</div>
+</div>
+<div style="display:flex;justify-content:space-between;font:400 11px 'IBM Plex Sans',sans-serif;color:#6E7681">
+<span>Elapsed <span style="color:#DDE0E5;font-family:'Roboto Mono',monospace">{{ elapsedHuman }}</span></span>
+<span>Left <span style="color:#DDE0E5;font-family:'Roboto Mono',monospace">{{ remainHuman }}</span></span>
+</div>
+<div style="display:flex;align-items:center;gap:7px;font:400 10.5px 'IBM Plex Sans',sans-serif;color:#5C636E;cursor:help" onMouseEnter="{{ tipStamp }}" onMouseLeave="{{ hideTip }}">
+<span style="width:5px;height:5px;border-radius:50%;background:#6E7681"></span>Calculated {{ stampShort }}
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ noProgress }}" hint-placeholder-val="{{ false }}">
+<div style="padding:16px;border:1px dashed rgba(255,255,255,.11);border-radius:13px;text-align:center;font:400 12px/1.5 'IBM Plex Sans',sans-serif;color:#5C636E">Enter a start time and a percentage — the finish appears here.</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isDurationTab }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:20px">
+
+<div style="padding:14px 16px 16px;background:#15181E;border:1px solid rgba(255,255,255,.09);border-radius:13px" style-focus-within="border-color:#8B7CFF">
+<div style="margin-bottom:11px;font:500 10.5px 'Roboto Mono',monospace;letter-spacing:.09em;text-transform:uppercase;color:#8A9199;cursor:help;border-bottom:1px dotted rgba(255,255,255,.22);display:inline-block" onMouseEnter="{{ tipDur }}" onMouseLeave="{{ hideTip }}">Time remaining</div>
+<div style="display:flex;gap:9px">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 0 10px;background:#0A0C10;border:1px solid rgba(255,255,255,.1);border-radius:11px">
+<input type="number" min="0" placeholder="0" value="{{ d }}" onChange="{{ onD }}" style="width:100%;background:transparent;border:none;color:#C4BCFF;font:700 26px 'Roboto Mono',monospace;outline:none;text-align:center">
+<span style="font:500 9.5px 'Roboto Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6E7681">days</span>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 0 10px;background:#0A0C10;border:1px solid rgba(255,255,255,.1);border-radius:11px">
+<input type="number" min="0" max="23" placeholder="0" value="{{ h }}" onChange="{{ onH }}" style="width:100%;background:transparent;border:none;color:#C4BCFF;font:700 26px 'Roboto Mono',monospace;outline:none;text-align:center">
+<span style="font:500 9.5px 'Roboto Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6E7681">hours</span>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 0 10px;background:#0A0C10;border:1px solid rgba(255,255,255,.1);border-radius:11px">
+<input type="number" min="0" max="59" placeholder="0" value="{{ m }}" onChange="{{ onM }}" style="width:100%;background:transparent;border:none;color:#C4BCFF;font:700 26px 'Roboto Mono',monospace;outline:none;text-align:center">
+<span style="font:500 9.5px 'Roboto Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6E7681">mins</span>
+</div>
+</div>
+</div>
+
+<sc-if value="{{ hasDuration }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;background:linear-gradient(135deg,rgba(139,124,255,.13),rgba(139,124,255,.03));border:1px solid rgba(139,124,255,.24);border-radius:14px;overflow:hidden">
+<div style="flex:1;min-width:0;padding:16px var(--duration-result-pad,14px);text-align:center">
+<div style="font:500 9.5px 'Roboto Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#A99BFF;margin-bottom:8px">Done at</div>
+<div style="font:700 26px/1 'Roboto Mono',monospace;font-size:var(--done-time-size,26px);color:#D8D2FF;letter-spacing:-.02em;margin-bottom:7px">{{ addTime }}</div>
+<div style="font:400 11.5px 'IBM Plex Sans',sans-serif;color:#B9AFFF">{{ addDate }}</div>
+<div style="font:400 11px 'IBM Plex Sans',sans-serif;color:#8B7CFF;margin-top:3px">{{ addTotal }}</div>
+</div>
+<div style="width:1px;background:rgba(139,124,255,.22)"></div>
+<div style="flex:1;min-width:0;padding:16px var(--duration-result-pad,14px);text-align:center">
+<div style="font:500 9.5px 'Roboto Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#A99BFF;margin-bottom:8px">Calculated Time left</div>
+<div style="font:700 22px/1 'Roboto Mono',monospace;font-size:var(--countdown-size,22px);color:#D8D2FF;letter-spacing:-.03em;margin-bottom:7px;font-variant-numeric:tabular-nums">{{ leftClock }}</div>
+<div style="font:400 11.5px 'IBM Plex Sans',sans-serif;color:#B9AFFF">{{ leftHuman }}</div>
+<div style="font:400 11px 'IBM Plex Sans',sans-serif;color:#8B7CFF;margin-top:3px">{{ leftTotal }}</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ noDuration }}" hint-placeholder-val="{{ false }}">
+<div style="padding:16px;border:1px dashed rgba(255,255,255,.11);border-radius:13px;text-align:center;font:400 12px/1.5 'IBM Plex Sans',sans-serif;color:#5C636E">Enter a duration — the finish time appears here.</div>
+</sc-if>
+
+<div style="align-self:center;text-align:center;padding:6px 0 2px">
+<div style="font:500 9.5px 'Roboto Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6E7681;margin-bottom:8px;cursor:help;border-bottom:1px dotted rgba(255,255,255,.18)" onMouseEnter="{{ tipStamp }}" onMouseLeave="{{ hideTip }}">Last updated</div>
+<div style="font:700 30px/1 'Roboto Mono',monospace;color:#F2F3F5;letter-spacing:-.02em">{{ stampTime }}</div>
+<div style="font:400 11.5px 'IBM Plex Sans',sans-serif;color:#6E7681;margin-top:6px">{{ stampDate }}</div>
+</div>
+</div>
+</sc-if>
+
+<div style="display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)">
+<button class="footer-button" onClick="{{ resetAll }}" style="min-height:var(--footer-min-height,0px);padding:6px 11px;background:transparent;border:1px solid rgba(255,255,255,.09);border-radius:7px;color:#6E7681;font:500 11px 'IBM Plex Sans',sans-serif;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent" style-hover="color:#F2F3F5;border-color:rgba(255,255,255,.2)">Reset</button>
+<button class="footer-button" onClick="{{ openTabHelp }}" style="min-height:var(--footer-min-height,0px);display:flex;align-items:center;gap:6px;padding:6px 11px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:999px;color:#9AA0AA;font:500 11px 'IBM Plex Sans',sans-serif;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent" style-hover="color:#F2F3F5;border-color:rgba(255,255,255,.2)"><span style="font:700 11px 'Roboto Mono',monospace">?</span>How this works</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:540,&quot;height&quot;:860}}">
+const LS = 'taskcalc.v2';
+class Component extends DCLogic {
+  state = { start:'', pct:'', d:'', h:'', m:'', stamp:Date.now(), tab:'progress', help:null, tip:null, tipX:0, tipY:0 };
+
+  componentDidMount() {
+    try {
+      const s = JSON.parse(localStorage.getItem(LS) || '{}');
+      const any = s.start || s.pct || s.d || s.h || s.m;
+      if (any) this.setState({ start:this.clampStart(s.start||''), pct:s.pct||'', d:s.d||'', h:s.h||'', m:s.m||'', stamp:Date.now() });
+      else this.setState({ pct:'42', start:this.localISO(new Date(Date.now()-1000*60*205)), stamp:Date.now() });
+    } catch (e) {}
+    // ticks only the live countdown; calculations stay pinned to `stamp`
+    this.tickTimer = setInterval(() => this.setState({ tick: Date.now() }), 1000);
+  }
+
+  componentWillUnmount() { clearInterval(this.tickTimer); }
+
+  localISO(dt) { return new Date(dt.getTime() - dt.getTimezoneOffset()*60000).toISOString().slice(0,16); }
+  clampStart(value) {
+    if (!value) return '';
+    const selected = new Date(value), now = new Date();
+    if (isNaN(selected.getTime())) return '';
+    return selected.getTime() > now.getTime() ? this.localISO(now) : value;
+  }
+
+  // every input change re-stamps the clock; nothing recalculates on its own
+  persist(next) {
+    this.setState(Object.assign({ stamp: Date.now() }, next), () => {
+      const s = this.state;
+      try { localStorage.setItem(LS, JSON.stringify({ start:s.start, pct:s.pct, d:s.d, h:s.h, m:s.m })); } catch (e) {}
+    });
+  }
+
+  human(mins) {
+    if (!isFinite(mins) || mins <= 0) return '0m';
+    const t = Math.round(mins), dd = Math.floor(t/1440), hh = Math.floor((t%1440)/60), mm = t%60;
+    const out = [];
+    if (dd) out.push(dd + 'd');
+    if (hh) out.push(hh + 'h');
+    if (mm || !out.length) out.push(mm + 'm');
+    return out.join(' ');
+  }
+  clockSec(secs) {
+    const t = Math.max(0, Math.floor(secs)), p = (n) => String(n).padStart(2, '0');
+    return p(Math.floor(t/86400)) + ':' + p(Math.floor((t%86400)/3600)) + ':' + p(Math.floor((t%3600)/60)) + ':' + p(t%60);
+  }
+  clock(mins) {
+    const t = Math.max(0, Math.round(mins)), p = (n) => String(n).padStart(2, '0');
+    return p(Math.floor(t/1440)) + ':' + p(Math.floor((t%1440)/60)) + ':' + p(t%60);
+  }
+  time(dt) { return dt.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' }); }
+  date(dt) { return dt.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }); }
+  short(dt) { return this.date(dt) + ' ' + this.time(dt); }
+
+  renderVals() {
+    const s = this.state, stamp = new Date(s.stamp);
+    const pctNum = parseFloat(s.pct);
+    const startDt = s.start ? new Date(s.start) : null;
+    const validStart = startDt && !isNaN(startDt.getTime()) && startDt.getTime() <= s.stamp;
+    const validPct = isFinite(pctNum) && pctNum > 0 && pctNum < 100;
+    const ok = validStart && validPct;
+
+    let elapsed = 0, total = 0, remain = 0, eta = null;
+    if (ok) {
+      elapsed = (s.stamp - startDt.getTime()) / 60000;
+      total = elapsed / (pctNum/100);
+      remain = total - elapsed;
+      eta = new Date(startDt.getTime() + total*60000);
+    }
+    const pctClamped = validPct ? pctNum : 0;
+
+    const dn = parseInt(s.d)||0, hn = parseInt(s.h)||0, mn = parseInt(s.m)||0;
+    const addMins = dn*1440 + hn*60 + mn;
+    const addEta = addMins > 0 ? new Date(s.stamp + addMins*60000) : null;
+    const leftSecs = addEta ? Math.max(0, (addEta.getTime() - Date.now())/1000) : 0;
+
+    const tips = {
+      start: 'The exact moment the task began. Everything is measured forward from here — hit “Now” if it just started.',
+      pct: 'How far along the task is right now, 0–100. The rest is assumed to continue at the same pace.',
+      dur: 'How much longer you expect the task to take. It is added to the clock reading above.',
+      step: 'Nudges the percentage by one tenth of a point.',
+      slider: 'Drag for a rough figure, then fine-tune with − and + in 0.1 steps.',
+      stamp: 'The clock reading this calculation used. It refreshes whenever you change an input — including when you come back tomorrow and re-enter your progress.'
+    };
+    const tip = (k) => (e) => this.setState({ tip: tips[k], tipX: e.clientX + 'px', tipY: (e.clientY - 12) + 'px' });
+
+    const helpContent = {
+      progress: { color:'#F2C14E', title:'By progress', blurb:'Use it when a task is already running and you can eyeball how far along it is — a render, a transfer, a batch job.',
+        steps:[{n:'1',text:'Set the exact date and time the task started (“Now” fills it in).'},{n:'2',text:'Type the percentage complete.'},{n:'3',text:'The finish estimate appears, based on the clock at the moment you typed. Update the percentage whenever you check back to re-estimate.'}] },
+      duration: { color:'#8B7CFF', title:'By duration', blurb:'Use it when you already know how much longer something needs, and just want the wall-clock time it lands on.',
+        steps:[{n:'1',text:'Enter days, hours and minutes remaining.'},{n:'2',text:'“Done at” is that duration added to the last-updated clock reading.'},{n:'3',text:'Change any field to recalculate against the current time.'}] },
+    };
+    const hk = s.help === 'tab' ? s.tab : s.help;
+    const hc = hk ? helpContent[hk] : null;
+
+    return {
+      start: s.start, maxStart: this.localISO(new Date()), pct: s.pct, d: s.d, h: s.h, m: s.m,
+      onStart: (e) => this.persist({ start: this.clampStart(e.target.value) }),
+      onPct: (e) => this.persist({ pct: e.target.value }),
+      pctBlur: (e) => { const v = parseFloat(e.target.value); this.persist({ pct: isFinite(v) ? Math.min(99.9, Math.max(0.1, v)).toFixed(1) : '' }); },
+      pctUp: () => { const v = isFinite(pctNum) ? pctNum : 0; this.persist({ pct: Math.min(99.9, v + 0.1).toFixed(1) }); },
+      pctDown: () => { const v = isFinite(pctNum) ? pctNum : 0; this.persist({ pct: Math.max(0.1, v - 0.1).toFixed(1) }); },
+      pctSlider: validPct ? pctNum : 0.1,
+      onD: (e) => this.persist({ d: e.target.value }),
+      onH: (e) => this.persist({ h: e.target.value }),
+      onM: (e) => this.persist({ m: e.target.value }),
+      setNow: () => this.persist({ start: this.localISO(new Date()) }),
+      resetAll: () => this.persist({ start:'', pct:'', d:'', h:'', m:'' }),
+
+      stampTime: this.time(stamp), stampDate: this.date(stamp), stampShort: this.short(stamp),
+
+      hasProgress: ok, noProgress: !ok,
+      elapsedHuman: ok ? this.human(elapsed) : '—',
+      remainHuman: ok ? this.human(remain) : '—',
+      etaTime: eta ? this.time(eta) : '—',
+      etaDate: eta ? this.date(eta) : 'awaiting input',
+      etaRel: ok ? 'in ' + this.human(remain) : '',
+
+      hasDuration: addMins > 0, noDuration: addMins <= 0,
+      addTime: addEta ? this.time(addEta) : '—',
+      addDate: addEta ? this.date(addEta) : 'awaiting input',
+      addTotal: addMins > 0 ? addMins.toLocaleString() + ' min total' : '',
+      leftClock: addEta ? this.clockSec(leftSecs) : '—',
+      leftHuman: addEta ? (leftSecs > 0 ? this.human(leftSecs/60) : 'time is up') : '',
+      leftTotal: addEta ? Math.max(0, Math.ceil(leftSecs/60)).toLocaleString() + ' minutes remaining' : '',
+
+      isProgressTab: s.tab === 'progress', isDurationTab: s.tab === 'duration',
+      tabProgress: () => this.setState({ tab:'progress' }), tabDuration: () => this.setState({ tab:'duration' }),
+      tabAbg: s.tab === 'progress' ? '#F2C14E' : 'transparent',
+      tabAfg: s.tab === 'progress' ? '#111' : '#9AA0AA',
+      tabBbg: s.tab === 'duration' ? '#8B7CFF' : 'transparent',
+      tabBfg: s.tab === 'duration' ? '#111' : '#9AA0AA',
+
+      openTabHelp: () => this.setState({ help:'tab' }),
+      closeHelp: () => this.setState({ help:null }),
+      help: !!s.help,
+      helpColor: hc ? hc.color : '#F2C14E',
+      helpTitle: hc ? hc.title : '',
+      helpBlurb: hc ? hc.blurb : '',
+      helpSteps: hc ? hc.steps : [],
+
+      tip: s.tip, tipX: s.tipX, tipY: s.tipY,
+      tipStart: tip('start'), tipPct: tip('pct'), tipDur: tip('dur'), tipStamp: tip('stamp'),
+      tipStep: tip('step'), tipSlider: tip('slider'),
+      pctWidth: pctClamped + '%',
+      hideTip: () => this.setState({ tip:null }),
+    };
+  }
+}
+</script>
+</body>
+</html>
