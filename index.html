@@ -114,7 +114,7 @@ body{width:100%;min-height:100vh;min-height:100svh;--card-padding:24px;--card-ra
 </div>
 <button class="pct-step" onClick="{{ pctUp }}" style="flex:none;width:var(--pct-step-width,46px);background:#0A0C10;border:1px solid rgba(255,255,255,.1);border-radius:11px;color:#F2C14E;font:400 22px 'Roboto Mono',monospace;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent" style-hover="background:rgba(242,193,78,.14);border-color:rgba(242,193,78,.4)">+</button>
 </div>
-<input type="range" min="0.1" max="99.9" step="0.1" value="{{ pctSlider }}" onChange="{{ onPct }}" style="width:100%;margin:15px 0 0;display:block;--fill:{{ pctWidth }}">
+<input type="range" min="0.1" max="99.9" step="0.1" value="{{ pctSlider }}" onChange="{{ onPctSlider }}" style="width:100%;margin:15px 0 0;display:block;--fill:{{ pctWidth }}">
 <div style="display:flex;justify-content:space-between;margin-top:5px;font:400 9.5px 'Roboto Mono',monospace;color:#4E555F">
 <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
 </div>
@@ -208,8 +208,8 @@ class Component extends DCLogic {
     try {
       const s = JSON.parse(localStorage.getItem(LS) || '{}');
       const any = s.start || s.pct || s.d || s.h || s.m;
-      if (any) this.setState({ start:this.clampStart(s.start||''), pct:s.pct||'', d:s.d||'', h:s.h||'', m:s.m||'', stamp:Date.now() });
-      else this.setState({ pct:'42', start:this.localISO(new Date(Date.now()-1000*60*205)), stamp:Date.now() });
+      if (any) this.setState({ start:this.clampStart(s.start||''), pct:this.formatPct(s.pct), d:s.d||'', h:s.h||'', m:s.m||'', stamp:Date.now() });
+      else this.setState({ pct:'42.0', start:this.localISO(new Date(Date.now()-1000*60*205)), stamp:Date.now() });
     } catch (e) {}
     // ticks only the live countdown; calculations stay pinned to `stamp`
     this.tickTimer = setInterval(() => this.setState({ tick: Date.now() }), 1000);
@@ -218,6 +218,10 @@ class Component extends DCLogic {
   componentWillUnmount() { clearInterval(this.tickTimer); }
 
   localISO(dt) { return new Date(dt.getTime() - dt.getTimezoneOffset()*60000).toISOString().slice(0,16); }
+  formatPct(value) {
+    const pct = parseFloat(value);
+    return isFinite(pct) ? Math.min(99.9, Math.max(0.1, pct)).toFixed(1) : '';
+  }
   clampStart(value) {
     if (!value) return '';
     const selected = new Date(value), now = new Date();
@@ -299,10 +303,11 @@ class Component extends DCLogic {
       start: s.start, maxStart: this.localISO(new Date()), pct: s.pct, d: s.d, h: s.h, m: s.m,
       onStart: (e) => this.persist({ start: this.clampStart(e.target.value) }),
       onPct: (e) => this.persist({ pct: e.target.value }),
-      pctBlur: (e) => { const v = parseFloat(e.target.value); this.persist({ pct: isFinite(v) ? Math.min(99.9, Math.max(0.1, v)).toFixed(1) : '' }); },
+      pctBlur: (e) => this.persist({ pct: this.formatPct(e.target.value) }),
       pctUp: () => { const v = isFinite(pctNum) ? pctNum : 0; this.persist({ pct: Math.min(99.9, v + 0.1).toFixed(1) }); },
       pctDown: () => { const v = isFinite(pctNum) ? pctNum : 0; this.persist({ pct: Math.max(0.1, v - 0.1).toFixed(1) }); },
       pctSlider: validPct ? pctNum : 0.1,
+      onPctSlider: (e) => this.persist({ pct: this.formatPct(e.target.value) }),
       onD: (e) => this.persist({ d: e.target.value }),
       onH: (e) => this.persist({ h: e.target.value }),
       onM: (e) => this.persist({ m: e.target.value }),
