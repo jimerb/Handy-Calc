@@ -1,0 +1,8 @@
+{
+  "name": "handy-calc-sites-hosting",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-site.mjs"
+  }
+}

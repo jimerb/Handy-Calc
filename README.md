@@ -4,7 +4,9 @@ Handy Calc is a small browser-based tool for answering “when will this finish?
 
 ## Open the app
 
-[Open the public site](https://jimerb.github.io/Handy-Calc/)
+[Open Handy Calc on ChatGPT Sites](https://handy-calc.jimerb.chatgpt.site/)
+
+[GitHub Pages mirror](https://jimerb.github.io/Handy-Calc/)
 
 [Open the local preview](http://127.0.0.1:8000/)
 
